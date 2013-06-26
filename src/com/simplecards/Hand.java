@@ -12,10 +12,18 @@ public class Hand {
 
     protected Card[] _cards;
         
+    public Hand() {
+        this._cards = new Card[0];
+    }
+
     public Hand(Card[] cards) {
         this._cards = cards;
     }
-        
+
+    public Hand(List<Card> cards) {
+        this._cards = (Card[])cards.toArray(new Card[0]);
+    }
+
     public Card[] getCards() { return _cards; }
 
     public void add(Card card) {

@@ -44,12 +44,6 @@ public abstract class BaseEngine {
             ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, 
             EIGHT, NINE, TEN, JACK, QUEEN, KING };
 
-    /**
-     *
-     * Parse a String representation of cards.
-     *
-     */
-    public abstract Hand parseCards(String[] strCards);
 
 
     /**

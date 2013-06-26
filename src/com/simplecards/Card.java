@@ -8,6 +8,11 @@ public class Card {
     protected String _face;
     protected String _suit;
 
+    public Card(String str) {
+        this(   str.substring(0, str.length() - 1), 
+                str.substring(str.length() - 1)         );
+    }
+
     public Card(String face, String suit) {
         this._face = face;
         this._suit = suit;
