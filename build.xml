@@ -1,0 +1,21 @@
+<project default="jar" >
+
+    <target name="clean">
+        <delete dir="build" />
+        <delete dir="dist" />
+    </target>
+
+    <target name="compile" >
+        <mkdir dir="build/classes" />
+        <javac  srcdir="src" 
+                destdir="build/classes"
+                debug="true" >
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile" >
+        <mkdir dir="dist" />
+        <jar destfile="dist/simple-cards.jar" basedir="build/classes" />
+    </target>
+
+</project>
