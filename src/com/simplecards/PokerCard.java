@@ -29,16 +29,22 @@ public class PokerCard extends Card {
         if(_value != -1) {
             return _value;
         }
-        
+    
+        return getValue(_face);
+
+    }
+
+    public static int getValue(String face) {
+
         for(int i = 0; i < BaseEngine.FACES.length; i++) {
-            if(_face.equals(BaseEngine.FACES[i])) {
+            if(face.equals(BaseEngine.FACES[i])) {
                 return i;
             }
         }
 
         //
         // Should be an error.
-        //
+        // 
         return -1;
     }
 
