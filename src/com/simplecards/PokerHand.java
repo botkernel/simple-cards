@@ -25,7 +25,7 @@ public class PokerHand extends Hand {
     // User loses a credit when it is entered in the machine to start game.
     // User is returned (if they have a winning hand) x*bet.
     //
-    // Notes
+    // Notes from:
     // http://www.worktheodds.com/university/videopoker.php
     //
     // It is important to note that all Video Poker payoffs are on a “for” 
@@ -40,6 +40,36 @@ public class PokerHand extends Hand {
     // Is basically the index in the BaseEngine's FACES array.
     //
     private static final int JACK_VALUE = 10;
+
+    private static final int WIN_ROYAL          = 250;
+    private static final int WIN_STRFLUSH       = 50;
+    private static final int WIN_FOUROFKIND     = 25;
+    private static final int WIN_FULLHOUSE      = 9;
+    private static final int WIN_FLUSH          = 6;
+    private static final int WIN_STRAIGHT       = 4;
+    private static final int WIN_THREEODKIND    = 3;
+    private static final int WIN_TWOPAIR        = 2;
+    private static final int WIN_PAIR           = 1;
+
+    public static final Map<Integer, String> PRETTY_NAME_MAP = 
+        new HashMap<Integer, String>();
+    static {
+        PRETTY_NAME_MAP.put(new Integer(WIN_ROYAL), "ROYAL FLUSH");
+        PRETTY_NAME_MAP.put(new Integer(WIN_STRFLUSH), "STRAIGHT FLUSH");
+        PRETTY_NAME_MAP.put(new Integer(WIN_FOUROFKIND), "FOUR OF A KIND");
+        PRETTY_NAME_MAP.put(new Integer(WIN_FULLHOUSE), "FULL HOUSE");
+        PRETTY_NAME_MAP.put(new Integer(WIN_FLUSH), "FLUSH");
+        PRETTY_NAME_MAP.put(new Integer(WIN_STRAIGHT), "STRAIGHT");
+        PRETTY_NAME_MAP.put(new Integer(WIN_THREEODKIND), "THREE OF A KIND");
+        PRETTY_NAME_MAP.put(new Integer(WIN_TWOPAIR), "TWO PAIR");
+        PRETTY_NAME_MAP.put(new Integer(WIN_PAIR), "PAIR, JACKS OR BETTER");
+
+    }
+
+    public static final int[] WINNING_HANDS = new int[] {
+        WIN_ROYAL,          WIN_STRFLUSH,   WIN_FOUROFKIND,
+        WIN_FULLHOUSE,      WIN_FLUSH,      WIN_STRAIGHT,
+        WIN_THREEODKIND,    WIN_TWOPAIR,    WIN_PAIR };
 
 
     public PokerHand() {
@@ -61,7 +91,7 @@ public class PokerHand extends Hand {
 
         if(isRoyal()) {
             ret += "(ROYAL FLUSH)";
-        } else if(isStraight() && isFlush()) {
+        } else if(isStraightFlush()) {
             ret += "(STRAIGHT FLUSH)";
         } else if(isFourOfKind()) {
             ret += "(FOUR OF A KIND)";
@@ -80,6 +110,51 @@ public class PokerHand extends Hand {
         }
 
         return ret;
+    }
+
+    /**
+     *
+     * True if this hand is a winner. False otherwise.
+     */
+    public boolean isWinner() {
+        return (getWinType() != 0);
+    }
+
+    /**
+     *
+     * The payoff multiplier (and WIN_TYPE) for this winning hand, or 0
+     * if this is not a winning hand.
+     *
+     */
+    public int getWinType() {
+        if(isRoyal()) {
+            return WIN_ROYAL;
+        } 
+        if(isStraightFlush()) {
+            return WIN_STRFLUSH;
+        } 
+        if(isFourOfKind()) {
+            return WIN_FOUROFKIND;
+        } 
+        if(isFullHouse()) {
+            return WIN_FULLHOUSE;
+        } 
+        if(isFlush()) {
+            return WIN_FLUSH;
+        } 
+        if(isStraight()) {
+            return WIN_STRAIGHT;
+        } 
+        if(isThreeOfKind()) {
+            return WIN_THREEODKIND;
+        } 
+        if(isTwoPair()) {
+            return WIN_TWOPAIR;
+        } 
+        if(isPair()) {
+            return WIN_PAIR;
+        }
+        return 0;
     }
 
     public boolean isRoyal() {
@@ -125,6 +200,9 @@ public class PokerHand extends Hand {
         return false;
     }
 
+    public boolean isStraightFlush() {
+        return (isStraight() && isFlush());
+    }
 
     public boolean isFlush() {
         return  _cards[0].getSuit().equals(_cards[1].getSuit()) &&
@@ -211,6 +289,12 @@ public class PokerHand extends Hand {
                 if(minValue != -1) {
                     // check for minimum here (e.g. jacks)
                     int cardVal = PokerCard.getValue(face);
+
+                    // Special case for ace, use high value. 
+                    if(cardVal == 0) {
+                        cardVal = BaseEngine.FACES.length;
+                    }
+
                     if(cardVal >= minValue) {
                         return true;
                     }
